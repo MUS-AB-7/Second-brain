@@ -4,10 +4,17 @@ import jwt from "jsonwebtoken";
 import { JWT_PASSWORD } from "./config";
 import { userMiddleware } from "./middleware";
 import { random } from "./utils";
+import cors from "cors";
+
 
 const app = express();
 app.use(express.json());
-
+app.use(cors());
+// app.use(cors({
+//     origin: "http://localhost:3000", // Allow requests from frontend
+//     methods: "GET, POST, PUT, DELETE",
+//     credentials: true
+//   }));
 
 
 app.post('/api/v1/signup', async (req, res) => {
@@ -46,13 +53,11 @@ app.post('/api/v1/signin', async (req, res) => {
 app.post('/api/v1/content', userMiddleware, async (req, res) => {
     const link = req.body.link;
     const type = req.body.type;
-    const title = req.body.title;
-    const tags = req.body.tags;
 
     await ContentModel.create({
         link,
         type,
-        title,
+        title : req.body.title,
         //@ts-ignore
         userId: req.userId,
         tags: []
